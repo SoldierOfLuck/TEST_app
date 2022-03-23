@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Погодное приложение</string>
+    <string name="temperature_label">Температура</string>
+    <string name="feels_like_label">Ощущается как</string>
+    <string name="city_coordinates">Координаты: %s, %s"</string>
+    <string name="error">Ошибка</string>
+    <string name="reload">Перезагрузка</string>
+    <string name="Moscow">Москва</string>
+    <string name="sucсess">Успех</string>
+    <string name="air_humidity">Влажность воздуха</string>
+    <string name="humidity">%s %</string>
+    <string name="wind">Ветер</string>
+    <string name="wind_value">%s"</string>
+    <string name="season">Время года</string>
+    <string name="season_value">%s"</string>
+    <string name="summer">Лето</string>
+    <string name="kmh">км/ч</string>
+
+    <string name="threads">Threads</string>
+    <string name="in_main_thread">В главном потоке</string>
+    <string name="from_thread">Из потока %d</string>
+    <string name="in_thread">Выводим в потоке %s</string>
+    <string name="calculate_in_thread">Считаем в потоке %s</string>
+    <string name="my_handler_thread">My_Handler_Thread</string>
+    <string name="hello_from_thread_fragment">Hello from ThreadsFragment</string>
+    <string name="calculate">Расчёт</string>
+    <string name="default_number">1</string>
+    <string name="calc_in_thread">Расчёт в потоке</string>
+    <string name="handler_thread">Handler_Thread</string>
+    <string name="service">Service</string>
+    <string name="service_broadcast">Service + Broadcast</string>
+</resources>
