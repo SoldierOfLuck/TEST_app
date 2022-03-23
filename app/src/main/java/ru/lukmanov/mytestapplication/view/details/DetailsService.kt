@@ -20,8 +20,11 @@ const val LONGITUDE_EXTRA = "Longitude"
 private const val REQUEST_GET = "GET"
 private const val REQUEST_TIMEOUT = 10000
 private const val REQUEST_API_KEY = "X-Yandex-API-Key"
+
 class DetailsService(name: String = "DetailService") : IntentService(name) {
+
     private val broadcastIntent = Intent(DETAILS_INTENT_FILTER)
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onHandleIntent(intent: Intent?) {
         if (intent == null) {
@@ -75,15 +78,18 @@ class DetailsService(name: String = "DetailService") : IntentService(name) {
         if (fact == null) {
             onEmptyResponse()
         } else {
-            onSuccessResponse(fact.temp, fact.feels_like, fact.condition)
+            onSuccessResponse(fact.temp, fact.feels_like, fact.condition, fact.season, fact.humidity, fact.wind_speed)
         }
     }
-    private fun onSuccessResponse(temp: Int?, feelsLike: Int?, condition:
-    String?) {
+    private fun onSuccessResponse(temp: Int?, feelsLike: Int?, condition: String?,
+                                  season: String?, humidity: Int?, windspeed: Int?) {
         putLoadResult(DETAILS_RESPONSE_SUCCESS_EXTRA)
         broadcastIntent.putExtra(DETAILS_TEMP_EXTRA, temp)
         broadcastIntent.putExtra(DETAILS_FEELS_LIKE_EXTRA, feelsLike)
         broadcastIntent.putExtra(DETAILS_CONDITION_EXTRA, condition)
+        broadcastIntent.putExtra(DETAILS_WIND_SPEED_EXTRA, windspeed)
+        broadcastIntent.putExtra(DETAILS_HUMIDITY_EXTRA, humidity)
+        broadcastIntent.putExtra(DETAILS_SEASON_EXTRA, season)
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent)
     }
     private fun onMalformedURL() {

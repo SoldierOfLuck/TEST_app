@@ -31,19 +31,22 @@ const val DETAILS_RESPONSE_SUCCESS_EXTRA = "RESPONSE SUCCESS"
 const val DETAILS_TEMP_EXTRA = "TEMPERATURE"
 const val DETAILS_FEELS_LIKE_EXTRA = "FEELS LIKE"
 const val DETAILS_CONDITION_EXTRA = "CONDITION"
-//const val DETAILS_WIND_EXTRA = "WIND"
-//const val DETAILS_HUMIDITY_EXTRA = "HUMIDITY"
-//const val DETAILS_SEASON_EXTRA = "SEASON"
+const val DETAILS_WIND_SPEED_EXTRA = "WIND"
+const val DETAILS_HUMIDITY_EXTRA = "HUMIDITY"
+const val DETAILS_SEASON_EXTRA = "CONDITION"
 private const val TEMP_INVALID = -100
 private const val FEELS_LIKE_INVALID = -100
+private const val HUMIDITY_INVALID = 0
+private const val WIND_SPEED_INVALID = 0
 private const val PROCESS_ERROR = "Обработка ошибки"
 
-class DetailsFragment : Fragment() {
+class DetailsFragment : Fragment(R.layout.fragment_main) {
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var weatherBundle: Weather
-    private val loadResultsReceiver: BroadcastReceiver = object :
-        BroadcastReceiver() {
+
+    private val loadResultsReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.getStringExtra(DETAILS_LOAD_RESULT_EXTRA)) {
                 DETAILS_INTENT_EMPTY_EXTRA -> TODO(PROCESS_ERROR)
@@ -52,33 +55,41 @@ class DetailsFragment : Fragment() {
                 DETAILS_REQUEST_ERROR_EXTRA -> TODO(PROCESS_ERROR)
                 DETAILS_REQUEST_ERROR_MESSAGE_EXTRA -> TODO(PROCESS_ERROR)
                 DETAILS_URL_MALFORMED_EXTRA -> TODO(PROCESS_ERROR)
-                DETAILS_RESPONSE_SUCCESS_EXTRA -> renderData(
+
+                DETAILS_RESPONSE_SUCCESS_EXTRA -> displayWeather(
                     WeatherDTO(
                         FactDTO(
-                            intent.getIntExtra(DETAILS_TEMP_EXTRA, TEMP_INVALID
-                            ),
-                            intent.getIntExtra(DETAILS_FEELS_LIKE_EXTRA,
-                                FEELS_LIKE_INVALID),
-                            intent.getStringExtra(
-                                DETAILS_CONDITION_EXTRA
-                            )//,
-                            //intent.getIntExtra(DETAILS_WIND_EXTRA, TEMP_INVALID),
-                            //intent.getIntExtra(DETAILS_HUMIDITY_EXTRA, TEMP_INVALID),
-                            //intent.getStringExtra(DETAILS_SEASON_EXTRA)
+                            intent.getIntExtra(DETAILS_TEMP_EXTRA, TEMP_INVALID),
+                            intent.getIntExtra(DETAILS_FEELS_LIKE_EXTRA, FEELS_LIKE_INVALID),
+                            intent.getStringExtra(DETAILS_CONDITION_EXTRA),
+                            intent.getIntExtra(DETAILS_WIND_SPEED_EXTRA, WIND_SPEED_INVALID),
+                            intent.getIntExtra(DETAILS_HUMIDITY_EXTRA, HUMIDITY_INVALID),
+                            intent.getStringExtra(DETAILS_SEASON_EXTRA)
                         )
                     )
                 )
-                else -> TODO(PROCESS_ERROR)
             }
         }
     }
 
+    private val onLoadListener: WeatherLoader.WeatherLoaderListener =
+        object : WeatherLoader.WeatherLoaderListener {
+
+            override fun onLoaded(weatherDTO: WeatherDTO) {
+                displayWeather(weatherDTO)
+            }
+
+            override fun onFailed(throwable: Throwable) {
+                //Обработка ошибки
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         context?.let {
             LocalBroadcastManager.getInstance(it)
-                .registerReceiver(loadResultsReceiver,
-                    IntentFilter(DETAILS_INTENT_FILTER))
+                .registerReceiver(loadResultsReceiver, IntentFilter(DETAILS_INTENT_FILTER))
         }
     }
 
@@ -90,16 +101,17 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        weatherBundle = arguments?.getParcelable(BUNDLE_EXTRA) ?: Weather()
+        weatherBundle = arguments?.getParcelable<Weather>(BUNDLE_EXTRA) ?: Weather()
         getWeather()
     }
 
@@ -108,39 +120,32 @@ class DetailsFragment : Fragment() {
         binding.loadingLayout.visibility = View.VISIBLE
         context?.let {
             it.startService(Intent(it, DetailsService::class.java).apply {
-                putExtra(
-                    LATITUDE_EXTRA,
-                    weatherBundle.city.lat
-                )
-                putExtra(
-                    LONGITUDE_EXTRA,
-                    weatherBundle.city.lon
-                )
+                putExtra(LATITUDE_EXTRA,  weatherBundle.city.lat)
+                putExtra(LONGITUDE_EXTRA, weatherBundle.city.lon)
             })
         }
     }
 
-    private fun renderData(weatherDTO: WeatherDTO) {
-        binding.mainView.visibility = View.VISIBLE
-        binding.loadingLayout.visibility = View.GONE
-        val fact = weatherDTO.fact
-        val temp = fact!!.temp
-        val feelsLike = fact.feels_like
-        val condition = fact.condition
-        if (temp == TEMP_INVALID || feelsLike == FEELS_LIKE_INVALID || condition
-            == null) {
-            TODO(PROCESS_ERROR)
-        } else {
+    private fun displayWeather(weatherDTO: WeatherDTO) {
+        with (binding) {
+            mainView.visibility = View.VISIBLE
+            loadingLayout.visibility = View.GONE
+
             val city = weatherBundle.city
-            binding.cityName.text = city.city
-            binding.cityCoordinates.text = String.format(
+
+            cityName.text = city.city
+            cityCoordinates.text = String.format(
                 getString(R.string.city_coordinates),
                 city.lat.toString(),
                 city.lon.toString()
             )
-            binding.temperatureValue.text = temp.toString()
-            binding.feelsLikeValue.text = feelsLike.toString()
-            binding.weatherCondition.text = condition
+
+            weatherCondition.text = weatherDTO.fact?.condition
+            temperatureValue.text = weatherDTO.fact?.temp.toString()
+            feelsLikeValue.text = weatherDTO.fact?.feels_like.toString()
+            seasonValue.text = weatherDTO.fact?.season
+            humidityValue.text = weatherDTO.fact?.humidity.toString()
+            windValue.text = weatherDTO.fact?.wind_speed.toString()
         }
     }
 
@@ -151,6 +156,7 @@ class DetailsFragment : Fragment() {
 
     companion object {
         const val BUNDLE_EXTRA = "weather"
+
         fun newInstance(bundle: Bundle): DetailsFragment {
             val fragment = DetailsFragment()
             fragment.arguments = bundle
