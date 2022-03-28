@@ -4,17 +4,15 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.android.synthetic.main.fragment_details.*
-import ru.lukmanov.kotlin_course_app.R
-import ru.lukmanov.kotlin_course_app.databinding.FragmentDetailsBinding
+import ru.lukmanov.mytestapplication.R
+import ru.lukmanov.mytestapplication.databinding.FragmentDetailsBinding
 import ru.lukmanov.mytestapplication.model.FactDTO
 import ru.lukmanov.mytestapplication.model.Weather
 import ru.lukmanov.mytestapplication.model.WeatherDTO
@@ -32,6 +30,7 @@ const val DETAILS_TEMP_EXTRA = "TEMPERATURE"
 const val DETAILS_FEELS_LIKE_EXTRA = "FEELS LIKE"
 const val DETAILS_CONDITION_EXTRA = "CONDITION"
 const val DETAILS_WIND_SPEED_EXTRA = "WIND"
+const val DETAILS_PRESSURE_EXTRA = "PRESSURE"
 const val DETAILS_HUMIDITY_EXTRA = "HUMIDITY"
 const val DETAILS_SEASON_EXTRA = "CONDITION"
 private const val TEMP_INVALID = -100
@@ -62,7 +61,8 @@ class DetailsFragment : Fragment(R.layout.fragment_main) {
                             intent.getIntExtra(DETAILS_TEMP_EXTRA, TEMP_INVALID),
                             intent.getIntExtra(DETAILS_FEELS_LIKE_EXTRA, FEELS_LIKE_INVALID),
                             intent.getStringExtra(DETAILS_CONDITION_EXTRA),
-                            intent.getIntExtra(DETAILS_WIND_SPEED_EXTRA, WIND_SPEED_INVALID),
+                            //intent.getIntExtra(DETAILS_WIND_SPEED_EXTRA, TEMP_INVALID),
+                            intent.getIntExtra(DETAILS_PRESSURE_EXTRA, HUMIDITY_INVALID),
                             intent.getIntExtra(DETAILS_HUMIDITY_EXTRA, HUMIDITY_INVALID),
                             intent.getStringExtra(DETAILS_SEASON_EXTRA)
                         )
@@ -139,13 +139,12 @@ class DetailsFragment : Fragment(R.layout.fragment_main) {
                 city.lat.toString(),
                 city.lon.toString()
             )
-
             weatherCondition.text = weatherDTO.fact?.condition
             temperatureValue.text = weatherDTO.fact?.temp.toString()
             feelsLikeValue.text = weatherDTO.fact?.feels_like.toString()
             seasonValue.text = weatherDTO.fact?.season
             humidityValue.text = weatherDTO.fact?.humidity.toString()
-            windValue.text = weatherDTO.fact?.wind_speed.toString()
+            windValue.text = weatherDTO.fact?.pressure_mm.toString()
         }
     }
 

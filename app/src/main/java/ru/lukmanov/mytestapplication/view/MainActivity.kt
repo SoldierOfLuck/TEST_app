@@ -6,8 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import ru.lukmanov.kotlin_course_app.R
-import ru.lukmanov.kotlin_course_app.databinding.MainActivityBinding
+import ru.lukmanov.mytestapplication.R
+import ru.lukmanov.mytestapplication.databinding.MainActivityBinding
 import ru.lukmanov.mytestapplication.view.experiments.MainBroadcastReceiver
 import ru.lukmanov.mytestapplication.view.experiments.ThreadsFragment
 

@@ -6,7 +6,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.gson.Gson
-import ru.lukmanov.kotlin_course_app.BuildConfig
+import ru.lukmanov.mytestapplication.BuildConfig
 import ru.lukmanov.mytestapplication.model.WeatherDTO
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -78,16 +78,18 @@ class DetailsService(name: String = "DetailService") : IntentService(name) {
         if (fact == null) {
             onEmptyResponse()
         } else {
-            onSuccessResponse(fact.temp, fact.feels_like, fact.condition, fact.season, fact.humidity, fact.wind_speed)
+            onSuccessResponse(fact.temp, fact.feels_like, fact.condition, fact.season, fact.humidity,
+            fact.pressure_mm)//, fact.wind_speed)
         }
     }
     private fun onSuccessResponse(temp: Int?, feelsLike: Int?, condition: String?,
-                                  season: String?, humidity: Int?, windspeed: Int?) {
+                                  season: String?, humidity: Int?, pressure: Int?){//, windspeed: Int?) {
         putLoadResult(DETAILS_RESPONSE_SUCCESS_EXTRA)
         broadcastIntent.putExtra(DETAILS_TEMP_EXTRA, temp)
         broadcastIntent.putExtra(DETAILS_FEELS_LIKE_EXTRA, feelsLike)
         broadcastIntent.putExtra(DETAILS_CONDITION_EXTRA, condition)
-        broadcastIntent.putExtra(DETAILS_WIND_SPEED_EXTRA, windspeed)
+        //broadcastIntent.putExtra(DETAILS_WIND_SPEED_EXTRA, windspeed)
+        broadcastIntent.putExtra(DETAILS_PRESSURE_EXTRA, pressure)
         broadcastIntent.putExtra(DETAILS_HUMIDITY_EXTRA, humidity)
         broadcastIntent.putExtra(DETAILS_SEASON_EXTRA, season)
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent)

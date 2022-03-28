@@ -5,7 +5,7 @@ import android.os.Handler
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
-import ru.lukmanov.kotlin_course_app.BuildConfig
+import ru.lukmanov.mytestapplication.BuildConfig
 import ru.lukmanov.mytestapplication.model.WeatherDTO
 import java.io.BufferedReader
 import java.io.InputStreamReader

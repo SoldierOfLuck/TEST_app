@@ -1,18 +1,16 @@
 package ru.lukmanov.mytestapplication.view
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_main.*
-import ru.lukmanov.kotlin_course_app.R
-import ru.lukmanov.kotlin_course_app.databinding.FragmentMainBinding
+import ru.lukmanov.mytestapplication.R
+import ru.lukmanov.mytestapplication.databinding.FragmentMainBinding
 import ru.lukmanov.mytestapplication.model.Weather
 import ru.lukmanov.mytestapplication.view.details.DetailsFragment
 import ru.lukmanov.mytestapplication.viewmodel.AppState

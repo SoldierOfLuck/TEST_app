@@ -1,4 +1,4 @@
-package ru.lukmanov.kotlin_course_app
+package ru.lukmanov.mytestappliaction
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
