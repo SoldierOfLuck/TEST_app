@@ -27,18 +27,20 @@ class DetailsService(name: String = "DetailService") : IntentService(name) {
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onHandleIntent(intent: Intent?) {
-        if (intent == null) {
-            onEmptyIntent()
-        } else {
+        intent?.let {
             val lat = intent.getDoubleExtra(LATITUDE_EXTRA, 0.0)
             val lon = intent.getDoubleExtra(LONGITUDE_EXTRA, 0.0)
+
             if (lat == 0.0 && lon == 0.0) {
                 onEmptyData()
             } else {
                 loadWeather(lat.toString(), lon.toString())
             }
+        } ?: run {
+            onEmptyIntent()
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.N)
     private fun loadWeather(lat: String, lon: String) {
         try {
@@ -50,10 +52,12 @@ class DetailsService(name: String = "DetailService") : IntentService(name) {
                 urlConnection.apply {
                     requestMethod = REQUEST_GET
                     readTimeout = REQUEST_TIMEOUT
-                    addRequestProperty(REQUEST_API_KEY,
+                    addRequestProperty(
+                        REQUEST_API_KEY,
                         BuildConfig.WEATHER_API_KEY
                     )
                 }
+
                 val weatherDTO: WeatherDTO =
                     Gson().fromJson(
                         getLines(BufferedReader(InputStreamReader(urlConnection.inputStream))),
@@ -69,19 +73,23 @@ class DetailsService(name: String = "DetailService") : IntentService(name) {
             onMalformedURL()
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.N)
     private fun getLines(reader: BufferedReader): String {
         return reader.lines().collect(Collectors.joining("\n"))
     }
+
     private fun onResponse(weatherDTO: WeatherDTO) {
         val fact = weatherDTO.fact
-        if (fact == null) {
+
+        fact?.let{
+            onSuccessResponse(fact.temp, fact.feels_like, fact.condition, fact.season,
+                fact.humidity,fact.pressure_mm)
+        } ?: run {
             onEmptyResponse()
-        } else {
-            onSuccessResponse(fact.temp, fact.feels_like, fact.condition, fact.season, fact.humidity,
-            fact.pressure_mm)//, fact.wind_speed)
         }
     }
+
     private fun onSuccessResponse(temp: Int?, feelsLike: Int?, condition: String?,
                                   season: String?, humidity: Int?, pressure: Int?){//, windspeed: Int?) {
         putLoadResult(DETAILS_RESPONSE_SUCCESS_EXTRA)

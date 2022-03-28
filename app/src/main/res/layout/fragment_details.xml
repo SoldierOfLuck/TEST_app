@@ -12,7 +12,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/headerIcon"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/town_header_height"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@drawable/city_icon" />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/cityName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,7 +31,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/headerIcon"
             tools:text="@string/Moscow"/>
 
         <TextView
@@ -34,11 +44,12 @@
             app:layout_constraintTop_toBottomOf="@+id/cityName"
             tools:text="lt/ln: 55.755826, 37.617299900000035" />
 
+
         <TextView
             android:id="@+id/weatherCondition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_15_dp"
+            android:layout_marginTop="@dimen/weather_icon_margin"
             android:textSize="@dimen/feels_like_text_size"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +61,7 @@
             android:id="@+id/temperatureLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_15_dp"
+            android:layout_marginTop="@dimen/margin_10_dp"
             android:text="@string/temperature_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +102,7 @@
             tools:text="-25" />
         <ImageView
             android:id="@id/humidity_icon"
-            android:src="@drawable/humidity_icon"
+            tools:srcCompat ="@drawable/humidity_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginTop="@dimen/margin_15_dp"
@@ -115,7 +126,7 @@
             android:layout_height="40dp"
             android:layout_marginTop="@dimen/margin_15_dp"
             android:layout_marginEnd="@dimen/margin_15_dp"
-            android:src="@drawable/windicon"
+            tools:srcCompat="@drawable/windicon"
             app:layout_constraintEnd_toStartOf="@id/air_humidity"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feelsLikeValue"
@@ -137,7 +148,7 @@
             android:layout_height="40dp"
             android:layout_marginTop="@dimen/margin_15_dp"
             android:layout_marginStart="@dimen/margin_15_dp"
-            android:src="@drawable/season_icon"
+            tools:srcCompat="@drawable/season_icon"
             app:layout_constraintStart_toEndOf="@id/air_humidity"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feelsLikeValue"
