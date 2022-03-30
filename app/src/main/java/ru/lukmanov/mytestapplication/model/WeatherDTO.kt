@@ -12,5 +12,5 @@ data class FactDTO(
     val pressure_mm: Int?,
     val humidity: Int?,
     val season: String?,
-    //val icon: String?
+    val icon: String?
 )

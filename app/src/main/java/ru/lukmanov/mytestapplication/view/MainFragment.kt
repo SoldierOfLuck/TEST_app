@@ -1,5 +1,6 @@
 package ru.lukmanov.mytestapplication.view
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,6 +19,8 @@ import ru.lukmanov.mytestapplication.utils.CircleTransformation
 import ru.lukmanov.mytestapplication.view.details.DetailsFragment
 import ru.lukmanov.mytestapplication.viewmodel.AppState
 import ru.lukmanov.mytestapplication.viewmodel.MainViewModel
+
+private const val IS_WORLD_KEY = "LIST_OF_TOWNS_KEY"
 
 class MainFragment : Fragment() {
 
@@ -47,6 +50,8 @@ class MainFragment : Fragment() {
         }
     })
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,35 +61,47 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    private var isDataSetWorld: Boolean = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.mainFragmentRecyclerView.adapter = adapter
-        binding.mainFragmentFAB.setOnClickListener{ changeWeatherDataSet() }
-
-        val observer = Observer<AppState> {
-            renderData(it)
-        }
-
-        viewModel.getLiveData().observe(viewLifecycleOwner, observer)
-        viewModel.getWeatherFromLocalSourceRus()
+        binding.mainFragmentFAB.setOnClickListener { changeWeatherDataSet() }
+        viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
+        showListOfTowns()
     }
 
-    private fun changeWeatherDataSet() =
-        if (isDataSetRus) {
-            viewModel.getWeatherFromLocalSourceWorld()
-            Picasso
-                .get()
-                .load("https://e7.pngegg.com/pngimages/405/294/png-clipart-round-white-blue-and-red-illustration-flag-of-russia-computer-icons-russia-blue-flag.png")
-                .transform(CircleTransformation())
-                .into(mainFragmentFAB)
-        } else {
+    private fun showListOfTowns() {
+        activity?.let {
+            if (it.getPreferences(Context.MODE_PRIVATE).getBoolean(IS_WORLD_KEY,
+                    false)) {
+                changeWeatherDataSet()
+            } else {
+                viewModel.getWeatherFromLocalSourceRus()
+            }
+        }
+    }
+
+    private fun changeWeatherDataSet() {
+        if (isDataSetWorld) {
             viewModel.getWeatherFromLocalSourceRus()
-            Picasso
-                .get()
-                .load("https://yt3.ggpht.com/ytc/AKedOLQiGeQETGluQuUgQ5hnQKa4Dvp8wdHjwEyGRMY=s900-c-k-c0x00ffffff-no-rj")
-                .transform(CircleTransformation())
-                .into(mainFragmentFAB)
-        }.also { isDataSetRus = !isDataSetRus }
+            binding.mainFragmentFAB.setImageResource(R.drawable.ic_russia)
+        } else {
+            viewModel.getWeatherFromLocalSourceWorld()
+            binding.mainFragmentFAB.setImageResource(R.drawable.ic_global)
+        }
+        isDataSetWorld = !isDataSetWorld
+        saveListOfTowns(isDataSetWorld)
+    }
+
+    private fun saveListOfTowns(isDataSetWorld: Boolean) {
+        activity?.let {
+            with(it.getPreferences(Context.MODE_PRIVATE).edit()) {
+                putBoolean(IS_WORLD_KEY, isDataSetWorld)
+                apply()
+            }
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -96,15 +113,15 @@ class MainFragment : Fragment() {
         when(appState) {
             is AppState.Success -> {
                 val weatherData = appState.weatherData
-                binding.mainFragmentLoadingLayout.visibility = View.GONE
+                binding.includedLoadingLayout.loadingLayout.visibility = View.GONE
                 adapter.setWeather(appState.weatherData)
             }
 
             is AppState.Loading -> {
-                binding.mainFragmentLoadingLayout.visibility = View.VISIBLE
+                binding.includedLoadingLayout.loadingLayout.visibility = View.VISIBLE
             }
             is AppState.Error -> {
-                binding.mainFragmentLoadingLayout.visibility = View.GONE
+                binding.includedLoadingLayout.loadingLayout.visibility = View.GONE
 
                 binding.mainFragmentRootView.showSnackbar(
                     getString(R.string.error),

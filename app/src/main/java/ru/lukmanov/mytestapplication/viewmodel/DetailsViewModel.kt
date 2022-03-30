@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import ru.lukmanov.mytestapplication.App.Companion.getHistoryDao
+import ru.lukmanov.mytestapplication.model.Weather
 import ru.lukmanov.mytestapplication.model.WeatherDTO
-import ru.lukmanov.mytestapplication.repository.DetailsRepository
-import ru.lukmanov.mytestapplication.repository.DetailsRepositoryImpl
-import ru.lukmanov.mytestapplication.repository.RemoteDataSource
+import ru.lukmanov.mytestapplication.repository.*
 import ru.lukmanov.mytestapplication.utils.convertDtoToModel
 
 private const val SERVER_ERROR = "Ошибка сервера"
@@ -16,11 +16,24 @@ private const val REQUEST_ERROR = "Ошибка запроса на сервер
 private const val CORRUPTED_DATA = "Неполные данные"
 
 class DetailsViewModel(
-val detailsLiveData: MutableLiveData<AppState> = MutableLiveData(),
-private val detailsRepositoryImpl: DetailsRepository = DetailsRepositoryImpl(RemoteDataSource())
+    val detailsLiveData: MutableLiveData<AppState> = MutableLiveData(),
+    private val detailsRepository: DetailsRepository =
+        DetailsRepositoryImpl(RemoteDataSource()),
+    private val historyRepository: LocalRepository =
+        LocalRepositoryImpl(getHistoryDao())
 ) : ViewModel() {
-    private val callBack = object : Callback<WeatherDTO> {
-        override fun onResponse(call: Call<WeatherDTO>, response: Response<WeatherDTO>) {
+
+    fun getWeatherFromRemoteSource(lat: Double, lon: Double) {
+        detailsLiveData.value = AppState.Loading
+        detailsRepository.getWeatherDetailsFromServer(lat, lon, callBack)
+    }
+    fun saveCityToDB(weather: Weather) {
+        historyRepository.saveEntity(weather)
+    }
+    private val callBack = object :
+        Callback<WeatherDTO> {
+        override fun onResponse(call: Call<WeatherDTO>, response:
+        Response<WeatherDTO>) {
             val serverResponse: WeatherDTO? = response.body()
             detailsLiveData.postValue(
                 if (response.isSuccessful && serverResponse != null) {
@@ -46,10 +59,4 @@ private val detailsRepositoryImpl: DetailsRepository = DetailsRepositoryImpl(Rem
             }
         }
     }
-
-    fun getWeatherFromRemoteSource(lat: Double, lon: Double) {
-        detailsLiveData.value = AppState.Loading
-        detailsRepositoryImpl.getWeatherDetailsFromServer(lat, lon, callBack)
-    }
-
 }

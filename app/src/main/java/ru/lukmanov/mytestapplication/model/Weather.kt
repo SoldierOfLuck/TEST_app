@@ -12,7 +12,7 @@ data class Weather(
     val pressure_mm: Int = 742,
     val humidity: Int = 86,
     val season: String = "summer",
-    //val icon: String? = "bkn_n"
+    val icon: String? = "bkn_n"
 ): Parcelable
 
 fun getDefaultCity() = City("Москва", 55.755826, 37.617299900000035)
