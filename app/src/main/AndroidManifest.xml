@@ -3,6 +3,7 @@
     package="ru.lukmanov.mytestapplication">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".App"
@@ -12,8 +13,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Kotlin_course_app">
+        <provider
+            android:name=".view.contentprovider.EducationContentProvider"
+            android:authorities="ru.lukmanov"
+            android:enabled="true"
+            android:exported="true" />
+
         <activity
-            android:name="ru.lukmanov.mytestapplication.view.MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,11 +29,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name="ru.lukmanov.mytestapplication.view.experiments.MainService" />
-        <service android:name="ru.lukmanov.mytestapplication.view.details.DetailsService"/>
-
-
-
+        <service android:name=".view.experiments.MainService" />
+        <service android:name=".view.details.DetailsService" />
     </application>
 
 </manifest>

@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import ru.lukmanov.mytestapplication.R
 import ru.lukmanov.mytestapplication.databinding.MainActivityBinding
+import ru.lukmanov.mytestapplication.view.contentprovider.ContentProviderFragment
 import ru.lukmanov.mytestapplication.view.experiments.MainBroadcastReceiver
 import ru.lukmanov.mytestapplication.view.experiments.ThreadsFragment
 import ru.lukmanov.mytestapplication.view.history.HistoryFragment
@@ -60,6 +61,15 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager.apply {
                     beginTransaction()
                         .add(R.id.container, HistoryFragment.newInstance())
+                        .addToBackStack("")
+                        .commitAllowingStateLoss()
+                }
+                true
+            }
+            R.id.menu_content_provider -> {
+                supportFragmentManager.apply {
+                    beginTransaction()
+                        .add(R.id.container, ContentProviderFragment.newInstance())
                         .addToBackStack("")
                         .commitAllowingStateLoss()
                 }

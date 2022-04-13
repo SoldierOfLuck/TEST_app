@@ -31,4 +31,8 @@
     <string name="service_broadcast">Service + Broadcast</string>
 
     <string name="menu_title_history">История</string>
+
+    <string name="content_provider">Провайдер контента</string>
+    <string name="authorities">ru.lumanov</string>
+    <string name="havepermission">Разрешение предоставлено</string>
 </resources>
